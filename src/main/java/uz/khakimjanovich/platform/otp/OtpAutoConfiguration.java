@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;

@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import uz.heeypay.ecom.error.GeneralException;
+import uz.khakimjanovich.platform.error.GeneralException;
 
 /**
  * Issues and checks one-time codes. Redis keeps only a keyed hash (HMAC-SHA256 with a configured

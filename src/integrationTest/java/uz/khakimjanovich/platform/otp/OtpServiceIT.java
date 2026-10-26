@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,7 +25,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import uz.heeypay.ecom.error.GeneralException;
+import uz.khakimjanovich.platform.error.GeneralException;
 
 /** The one-time code rules, checked against a real Redis, with the library auto-configured. */
 @SpringBootTest(

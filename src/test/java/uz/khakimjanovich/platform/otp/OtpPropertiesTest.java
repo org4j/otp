@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

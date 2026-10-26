@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import uz.heeypay.ecom.error.GeneralException;
+import uz.khakimjanovich.platform.error.GeneralException;
 
 /** How the scripts' answers become codes and errors, without Redis. */
 @ExtendWith(OutputCaptureExtension.class)
