@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,16 +25,16 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import uz.heeypay.ecom.error.GeneralException;
+import uz.khakimjanovich.platform.error.GeneralException;
 
 /** The one-time code rules, checked against a real Redis, with the library auto-configured. */
 @SpringBootTest(
     classes = OtpServiceIT.App.class,
     properties = {
-      "ecom.otp.secret=test-secret",
-      "ecom.otp.max-attempts=3",
-      "ecom.otp.max-sends=2",
-      "ecom.otp.resend-after=0s"
+      "platform.otp.secret=test-secret",
+      "platform.otp.max-attempts=3",
+      "platform.otp.max-sends=2",
+      "platform.otp.resend-after=0s"
     })
 @Testcontainers
 class OtpServiceIT {
@@ -111,7 +111,7 @@ class OtpServiceIT {
     new ApplicationContextRunner()
         .withConfiguration(
             AutoConfigurations.of(DataRedisAutoConfiguration.class, OtpAutoConfiguration.class))
-        .withPropertyValues("ecom.otp.secret= ")
+        .withPropertyValues("platform.otp.secret= ")
         .run(context -> assertThat(context).hasFailed());
   }
 
@@ -158,8 +158,8 @@ class OtpServiceIT {
         .withPropertyValues(
             "spring.data.redis.host=" + REDIS.getHost(),
             "spring.data.redis.port=" + REDIS.getMappedPort(6379),
-            "ecom.otp.secret=test-secret",
-            "ecom.otp.resend-after=1m")
+            "platform.otp.secret=test-secret",
+            "platform.otp.resend-after=1m")
         .run(
             context -> {
               var service = context.getBean(OtpService.class);
@@ -186,7 +186,7 @@ class OtpServiceIT {
         .withPropertyValues(
             "spring.data.redis.port=" + closed,
             "spring.data.redis.timeout=1s",
-            "ecom.otp.secret=test-secret")
+            "platform.otp.secret=test-secret")
         .run(
             context ->
                 assertThatThrownBy(() -> context.getBean(OtpService.class).issue(FLOW, EMAIL))
@@ -199,9 +199,10 @@ class OtpServiceIT {
     assertThatThrownBy(() -> otp.verify(FLOW, EMAIL, code.equals("000000") ? "111111" : "000000"))
         .isInstanceOf(GeneralException.class);
     otp.verify(FLOW, EMAIL, code);
-    assertThat(meters.counter("ecom.otp.issued", "flow", FLOW).count()).isPositive();
-    assertThat(meters.counter("ecom.otp.verified", "flow", FLOW).count()).isPositive();
-    assertThat(meters.counter("ecom.otp.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
+    assertThat(meters.counter("platform.otp.issued", "flow", FLOW).count()).isPositive();
+    assertThat(meters.counter("platform.otp.verified", "flow", FLOW).count()).isPositive();
+    assertThat(
+            meters.counter("platform.otp.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
         .isPositive();
   }
 

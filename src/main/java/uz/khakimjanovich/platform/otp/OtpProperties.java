@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

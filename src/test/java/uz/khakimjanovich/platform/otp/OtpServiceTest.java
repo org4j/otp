@@ -1,4 +1,4 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +17,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import uz.heeypay.ecom.error.GeneralException;
+import uz.khakimjanovich.platform.error.GeneralException;
 
 /** How the scripts' answers become codes and errors, without Redis. */
 @ExtendWith(OutputCaptureExtension.class)
@@ -51,7 +51,7 @@ class OtpServiceTest {
     assertThat(otp.issue("registration", "aziz@example.uz")).matches("\\d{6}");
     var eight = new OtpService(redis, properties("test-secret", 8), meters);
     assertThat(eight.issue("registration", "aziz@example.uz")).matches("\\d{8}");
-    assertThat(meters.counter("ecom.otp.issued", "flow", "registration").count()).isEqualTo(2);
+    assertThat(meters.counter("platform.otp.issued", "flow", "registration").count()).isEqualTo(2);
   }
 
   @Test
@@ -82,7 +82,8 @@ class OtpServiceTest {
         .isInstanceOfSatisfying(
             GeneralException.class,
             e -> assertThat(e.getStatus()).isEqualTo(OtpExceptionStatus.OTP_EXPIRED));
-    assertThat(meters.counter("ecom.otp.rejected", "flow", "f", "reason", "OTP_INVALID").count())
+    assertThat(
+            meters.counter("platform.otp.rejected", "flow", "f", "reason", "OTP_INVALID").count())
         .isEqualTo(1);
   }
 

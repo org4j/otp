@@ -1,6 +1,6 @@
-package uz.heeypay.ecom.otp;
+package uz.khakimjanovich.platform.otp;
 
-import uz.heeypay.ecom.error.StatusThrowable;
+import uz.khakimjanovich.platform.error.StatusThrowable;
 
 /** Stable error codes for one-time code failures. */
 public enum OtpExceptionStatus implements StatusThrowable {
