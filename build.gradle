@@ -1,7 +1,7 @@
 // One-time codes for any module: stored as a keyed hash in Valkey, with a lifetime, an attempt limit and a send limit.
 plugins {
-    id 'platform.library'
-    id 'platform.integration-test'
+    alias(libs.plugins.platform.library)
+    alias(libs.plugins.platform.integration.test)
 }
 
 dependencies {

@@ -1,4 +1,4 @@
-# otp
+# otp4j
 
 One-time codes for any module: issued and checked in Valkey by one Lua script each, so limits hold
 and a code works once even under concurrent requests. Valkey keeps only HMAC-SHA256 hashes of the
