@@ -1,4 +1,4 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

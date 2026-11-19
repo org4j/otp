@@ -1,6 +1,6 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
-import uz.khakimjanovich.platform.error.StatusThrowable;
+import uz.khakimjanovich.error4j.StatusThrowable;
 
 public enum OtpExceptionStatus implements StatusThrowable {
   OTP_EXPIRED,

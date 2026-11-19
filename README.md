@@ -7,7 +7,7 @@ before hashing). A subject's keys share a Valkey Cluster hash tag (`otp:<flow>:{
 the scripts run on a cluster too.
 
 ```groovy
-implementation libs.platform.otp // needs Valkey (platform.valkey.* and spring.data.redis.*)
+implementation libs.otp4j // needs Valkey (valkey4j.* and spring.data.redis.*)
 ```
 
 ```java
@@ -26,14 +26,14 @@ unworkable value stops startup, naming the property.
 
 | Property | What |
 |---|---|
-| `platform.otp.secret` | key of the stored hashes, from Vault |
-| `platform.otp.length` | digits in a code, 4 to 10 |
-| `platform.otp.ttl` | how long a code stays valid |
-| `platform.otp.max-attempts` | wrong codes allowed per send window |
-| `platform.otp.max-sends` | codes sent to one subject per send window |
-| `platform.otp.send-window` | the window sends and wrong codes count in |
-| `platform.otp.resend-after` | wait between two codes; `0s` for none |
-| `platform.otp.key-prefix` | first part of every Valkey key |
+| `otp4j.secret` | key of the stored hashes, from Vault |
+| `otp4j.length` | digits in a code, 4 to 10 |
+| `otp4j.ttl` | how long a code stays valid |
+| `otp4j.max-attempts` | wrong codes allowed per send window |
+| `otp4j.max-sends` | codes sent to one subject per send window |
+| `otp4j.send-window` | the window sends and wrong codes count in |
+| `otp4j.resend-after` | wait between two codes; `0s` for none |
+| `otp4j.key-prefix` | first part of every Valkey key |
 
 ## Errors
 
@@ -48,7 +48,7 @@ unworkable value stops startup, naming the property.
 
 ## Metrics
 
-`platform.otp.issued{flow}`, `platform.otp.verified{flow}`, `platform.otp.rejected{flow,reason}` in the app's
+`otp4j.issued{flow}`, `otp4j.verified{flow}`, `otp4j.rejected{flow,reason}` in the app's
 meter registry.
 
 ## Beans you can replace

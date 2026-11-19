@@ -1,4 +1,4 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import java.nio.charset.StandardCharsets;
@@ -13,10 +13,10 @@ import java.util.function.Supplier;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
-import uz.khakimjanovich.platform.error.GeneralException;
-import uz.khakimjanovich.platform.valkey.ValkeyExceptionStatus;
-import uz.khakimjanovich.platform.valkey.ValkeyKeys;
-import uz.khakimjanovich.platform.valkey.ValkeyScript;
+import uz.khakimjanovich.error4j.GeneralException;
+import uz.khakimjanovich.valkey4j.ValkeyExceptionStatus;
+import uz.khakimjanovich.valkey4j.ValkeyKeys;
+import uz.khakimjanovich.valkey4j.ValkeyScript;
 
 @Slf4j
 public class OtpService {

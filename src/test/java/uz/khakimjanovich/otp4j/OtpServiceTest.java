@@ -1,4 +1,4 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,10 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import uz.khakimjanovich.platform.error.GeneralException;
-import uz.khakimjanovich.platform.valkey.ValkeyExceptionStatus;
-import uz.khakimjanovich.platform.valkey.ValkeyKeys;
-import uz.khakimjanovich.platform.valkey.ValkeyScript;
+import uz.khakimjanovich.error4j.GeneralException;
+import uz.khakimjanovich.valkey4j.ValkeyExceptionStatus;
+import uz.khakimjanovich.valkey4j.ValkeyKeys;
+import uz.khakimjanovich.valkey4j.ValkeyScript;
 
 @ExtendWith(OutputCaptureExtension.class)
 class OtpServiceTest {
@@ -52,7 +52,7 @@ class OtpServiceTest {
     assertThat(otp.issue("registration", "aziz@example.uz")).matches("\\d{6}");
     var eight = new OtpService(valkey, properties("test-secret", 8), meters);
     assertThat(eight.issue("registration", "aziz@example.uz")).matches("\\d{8}");
-    assertThat(meters.counter("platform.otp.issued", "flow", "registration").count()).isEqualTo(2);
+    assertThat(meters.counter("otp4j.issued", "flow", "registration").count()).isEqualTo(2);
   }
 
   @Test
@@ -84,7 +84,7 @@ class OtpServiceTest {
             GeneralException.class,
             e -> assertThat(e.getStatus()).isEqualTo(OtpExceptionStatus.OTP_EXPIRED));
     assertThat(
-            meters.counter("platform.otp.rejected", "flow", "f", "reason", "OTP_INVALID").count())
+            meters.counter("otp4j.rejected", "flow", "f", "reason", "OTP_INVALID").count())
         .isEqualTo(1);
   }
 

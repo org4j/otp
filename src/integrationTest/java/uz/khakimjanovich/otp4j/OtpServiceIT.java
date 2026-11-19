@@ -1,4 +1,4 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,21 +25,21 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import uz.khakimjanovich.platform.error.GeneralException;
-import uz.khakimjanovich.platform.valkey.ValkeyAutoConfiguration;
+import uz.khakimjanovich.error4j.GeneralException;
+import uz.khakimjanovich.valkey4j.ValkeyAutoConfiguration;
 
 @SpringBootTest(
     classes = OtpServiceIT.App.class,
     properties = {
-      "platform.valkey.service=otp-service",
-      "platform.otp.secret=test-secret",
-      "platform.otp.length=6",
-      "platform.otp.ttl=5m",
-      "platform.otp.max-attempts=3",
-      "platform.otp.max-sends=2",
-      "platform.otp.send-window=15m",
-      "platform.otp.resend-after=0s",
-      "platform.otp.key-prefix=otp"
+      "valkey4j.service=otp-service",
+      "otp4j.secret=test-secret",
+      "otp4j.length=6",
+      "otp4j.ttl=5m",
+      "otp4j.max-attempts=3",
+      "otp4j.max-sends=2",
+      "otp4j.send-window=15m",
+      "otp4j.resend-after=0s",
+      "otp4j.key-prefix=otp"
     })
 @Testcontainers
 class OtpServiceIT {
@@ -48,14 +48,14 @@ class OtpServiceIT {
   private static final String EMAIL = "aziza@example.uz";
 
   private static final String[] LIMITS = {
-    "platform.valkey.service=otp-service",
-    "platform.otp.length=6",
-    "platform.otp.ttl=5m",
-    "platform.otp.max-attempts=5",
-    "platform.otp.max-sends=3",
-    "platform.otp.send-window=15m",
-    "platform.otp.resend-after=60s",
-    "platform.otp.key-prefix=otp"
+    "valkey4j.service=otp-service",
+    "otp4j.length=6",
+    "otp4j.ttl=5m",
+    "otp4j.max-attempts=5",
+    "otp4j.max-sends=3",
+    "otp4j.send-window=15m",
+    "otp4j.resend-after=60s",
+    "otp4j.key-prefix=otp"
   };
 
   @Container
@@ -131,7 +131,7 @@ class OtpServiceIT {
                 ValkeyAutoConfiguration.class,
                 OtpAutoConfiguration.class))
         .withPropertyValues(LIMITS)
-        .withPropertyValues("platform.otp.secret= ")
+        .withPropertyValues("otp4j.secret= ")
         .run(context -> assertThat(context).hasFailed());
   }
 
@@ -182,8 +182,8 @@ class OtpServiceIT {
         .withPropertyValues(
             "spring.data.redis.host=" + VALKEY.getHost(),
             "spring.data.redis.port=" + VALKEY.getMappedPort(6379),
-            "platform.otp.secret=test-secret",
-            "platform.otp.resend-after=1m")
+            "otp4j.secret=test-secret",
+            "otp4j.resend-after=1m")
         .run(
             context -> {
               var service = context.getBean(OtpService.class);
@@ -214,7 +214,7 @@ class OtpServiceIT {
         .withPropertyValues(
             "spring.data.redis.port=" + closed,
             "spring.data.redis.timeout=1s",
-            "platform.otp.secret=test-secret")
+            "otp4j.secret=test-secret")
         .run(
             context ->
                 assertThatThrownBy(() -> context.getBean(OtpService.class).issue(FLOW, EMAIL))
@@ -227,10 +227,10 @@ class OtpServiceIT {
     assertThatThrownBy(() -> otp.verify(FLOW, EMAIL, code.equals("000000") ? "111111" : "000000"))
         .isInstanceOf(GeneralException.class);
     otp.verify(FLOW, EMAIL, code);
-    assertThat(meters.counter("platform.otp.issued", "flow", FLOW).count()).isPositive();
-    assertThat(meters.counter("platform.otp.verified", "flow", FLOW).count()).isPositive();
+    assertThat(meters.counter("otp4j.issued", "flow", FLOW).count()).isPositive();
+    assertThat(meters.counter("otp4j.verified", "flow", FLOW).count()).isPositive();
     assertThat(
-            meters.counter("platform.otp.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
+            meters.counter("otp4j.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
         .isPositive();
   }
 

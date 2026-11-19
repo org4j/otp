@@ -1,4 +1,4 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import uz.khakimjanovich.platform.valkey.ValkeyKeys;
+import uz.khakimjanovich.valkey4j.ValkeyKeys;
 
 class OtpPropertiesTest {
 
@@ -15,14 +15,14 @@ class OtpPropertiesTest {
           .withConfiguration(AutoConfigurations.of(OtpAutoConfiguration.class))
           .withBean(ValkeyKeys.class, () -> mock(ValkeyKeys.class))
           .withPropertyValues(
-              "platform.otp.secret=test-secret",
-              "platform.otp.length=6",
-              "platform.otp.ttl=5m",
-              "platform.otp.max-attempts=5",
-              "platform.otp.max-sends=3",
-              "platform.otp.send-window=15m",
-              "platform.otp.resend-after=60s",
-              "platform.otp.key-prefix=otp");
+              "otp4j.secret=test-secret",
+              "otp4j.length=6",
+              "otp4j.ttl=5m",
+              "otp4j.max-attempts=5",
+              "otp4j.max-sends=3",
+              "otp4j.send-window=15m",
+              "otp4j.resend-after=60s",
+              "otp4j.key-prefix=otp");
 
   @Test
   void everyLimitSetStarts() {
@@ -34,13 +34,13 @@ class OtpPropertiesTest {
     new ApplicationContextRunner()
         .withConfiguration(AutoConfigurations.of(OtpAutoConfiguration.class))
         .withBean(ValkeyKeys.class, () -> mock(ValkeyKeys.class))
-        .withPropertyValues("platform.otp.secret=test-secret")
+        .withPropertyValues("otp4j.secret=test-secret")
         .run(
             context ->
                 assertThat(context)
                     .getFailure()
                     .rootCause()
-                    .hasMessageContaining("platform.otp")
+                    .hasMessageContaining("otp4j")
                     .hasMessageContaining("length")
                     .hasMessageContaining("ttl")
                     .hasMessageContaining("maxAttempts")
@@ -53,20 +53,20 @@ class OtpPropertiesTest {
   @Test
   void aZeroLengthCodeStopsStartup() {
     runner
-        .withPropertyValues("platform.otp.length=0")
+        .withPropertyValues("otp4j.length=0")
         .run(
             context ->
                 assertThat(context)
                     .getFailure()
                     .rootCause()
-                    .hasMessageContaining("platform.otp")
+                    .hasMessageContaining("otp4j")
                     .hasMessageContaining("length"));
   }
 
   @Test
   void aCodeThatNeverLivesStopsStartup() {
     runner
-        .withPropertyValues("platform.otp.ttl=0s")
+        .withPropertyValues("otp4j.ttl=0s")
         .run(context -> assertThat(context).getFailure().rootCause().hasMessageContaining("ttl"));
   }
 }

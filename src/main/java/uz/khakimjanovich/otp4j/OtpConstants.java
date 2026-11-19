@@ -1,11 +1,11 @@
-package uz.khakimjanovich.platform.otp;
+package uz.khakimjanovich.otp4j;
 
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class OtpConstants {
 
-  public static final String PROPERTIES_PREFIX = "platform.otp";
+  public static final String PROPERTIES_PREFIX = "otp4j";
 
   public static final String KEY_FORMAT = "%s:%s:{%s}:%s";
 
@@ -20,9 +20,9 @@ public class OtpConstants {
   public static final String KEY_SENDS = "sends";
   public static final String KEY_LAST = "last";
 
-  public static final String METER_ISSUED = "platform.otp.issued";
-  public static final String METER_VERIFIED = "platform.otp.verified";
-  public static final String METER_REJECTED = "platform.otp.rejected";
+  public static final String METER_ISSUED = "otp4j.issued";
+  public static final String METER_VERIFIED = "otp4j.verified";
+  public static final String METER_REJECTED = "otp4j.rejected";
   public static final String TAG_FLOW = "flow";
   public static final String TAG_REASON = "reason";
 
@@ -30,5 +30,5 @@ public class OtpConstants {
   public static final String ISSUE_SCRIPT = "otp/issue.lua";
   public static final String VERIFY_SCRIPT = "otp/verify.lua";
   public static final String SECRET_MISSING =
-      "Set platform.otp.secret: codes are stored as HMACs keyed with it.";
+      "Set otp4j.secret: codes are stored as HMACs keyed with it.";
 }
