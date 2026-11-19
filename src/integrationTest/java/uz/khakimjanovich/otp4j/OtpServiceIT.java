@@ -229,8 +229,7 @@ class OtpServiceIT {
     otp.verify(FLOW, EMAIL, code);
     assertThat(meters.counter("otp4j.issued", "flow", FLOW).count()).isPositive();
     assertThat(meters.counter("otp4j.verified", "flow", FLOW).count()).isPositive();
-    assertThat(
-            meters.counter("otp4j.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
+    assertThat(meters.counter("otp4j.rejected", "flow", FLOW, "reason", "OTP_INVALID").count())
         .isPositive();
   }
 

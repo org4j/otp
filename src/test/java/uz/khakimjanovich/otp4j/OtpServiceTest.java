@@ -83,8 +83,7 @@ class OtpServiceTest {
         .isInstanceOfSatisfying(
             GeneralException.class,
             e -> assertThat(e.getStatus()).isEqualTo(OtpExceptionStatus.OTP_EXPIRED));
-    assertThat(
-            meters.counter("otp4j.rejected", "flow", "f", "reason", "OTP_INVALID").count())
+    assertThat(meters.counter("otp4j.rejected", "flow", "f", "reason", "OTP_INVALID").count())
         .isEqualTo(1);
   }
 
