@@ -1,4 +1,4 @@
-# otp4j
+# otp
 
 One-time codes for any module: issued and checked in Valkey by one Lua script each, so limits hold
 and a code works once even under concurrent requests. Valkey keeps only HMAC-SHA256 hashes of the
@@ -7,7 +7,7 @@ before hashing). A subject's keys share a Valkey Cluster hash tag (`otp:<flow>:{
 the scripts run on a cluster too.
 
 ```groovy
-implementation libs.otp4j // needs Valkey (valkey4j.* and spring.data.redis.*)
+implementation libs.otp // needs Valkey (valkey.* and spring.data.redis.*)
 ```
 
 ```java
@@ -26,14 +26,14 @@ unworkable value stops startup, naming the property.
 
 | Property | What |
 |---|---|
-| `otp4j.secret` | key of the stored hashes, from Vault |
-| `otp4j.length` | digits in a code, 4 to 10 |
-| `otp4j.ttl` | how long a code stays valid |
-| `otp4j.max-attempts` | wrong codes allowed per send window |
-| `otp4j.max-sends` | codes sent to one subject per send window |
-| `otp4j.send-window` | the window sends and wrong codes count in |
-| `otp4j.resend-after` | wait between two codes; `0s` for none |
-| `otp4j.key-prefix` | first part of every Valkey key |
+| `org4j.otp.secret` | key of the stored hashes, from Vault |
+| `org4j.otp.length` | digits in a code, 4 to 10 |
+| `org4j.otp.ttl` | how long a code stays valid |
+| `org4j.otp.max-attempts` | wrong codes allowed per send window |
+| `org4j.otp.max-sends` | codes sent to one subject per send window |
+| `org4j.otp.send-window` | the window sends and wrong codes count in |
+| `org4j.otp.resend-after` | wait between two codes; `0s` for none |
+| `org4j.otp.key-prefix` | first part of every Valkey key |
 
 ## Errors
 
@@ -48,7 +48,7 @@ unworkable value stops startup, naming the property.
 
 ## Metrics
 
-`otp4j.issued{flow}`, `otp4j.verified{flow}`, `otp4j.rejected{flow,reason}` in the app's
+`org4j.otp.issued{flow}`, `org4j.otp.verified{flow}`, `org4j.otp.rejected{flow,reason}` in the app's
 meter registry.
 
 ## Beans you can replace
@@ -57,8 +57,8 @@ meter registry.
 
 ## Tests
 
-- `./gradlew -p platform :otp:test`: codes, how every script answer becomes an error with
+- `./gradlew test`: codes, how every script answer becomes an error with
   `Retry-After`, Valkey down, the property checks.
-- `./gradlew -p platform :otp:integrationTest`: a real Valkey (`@ServiceConnection`): single use under
+- `./gradlew integrationTest`: a real Valkey (`@ServiceConnection`): single use under
   20 concurrent checks, nothing readable stored, lockout that holds across codes, cooldown, send
   limit, Valkey down, counters.
