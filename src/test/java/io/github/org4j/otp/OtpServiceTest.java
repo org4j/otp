@@ -1,4 +1,4 @@
-package uz.khakimjanovich.otp4j;
+package io.github.org4j.otp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,6 +7,10 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.github.org4j.error.GeneralException;
+import io.github.org4j.valkey.ValkeyExceptionStatus;
+import io.github.org4j.valkey.ValkeyKeys;
+import io.github.org4j.valkey.ValkeyScript;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Duration;
 import java.util.List;
@@ -15,10 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import uz.khakimjanovich.error4j.GeneralException;
-import uz.khakimjanovich.valkey4j.ValkeyExceptionStatus;
-import uz.khakimjanovich.valkey4j.ValkeyKeys;
-import uz.khakimjanovich.valkey4j.ValkeyScript;
 
 @ExtendWith(OutputCaptureExtension.class)
 class OtpServiceTest {
@@ -52,7 +52,7 @@ class OtpServiceTest {
     assertThat(otp.issue("registration", "aziz@example.uz")).matches("\\d{6}");
     var eight = new OtpService(valkey, properties("test-secret", 8), meters);
     assertThat(eight.issue("registration", "aziz@example.uz")).matches("\\d{8}");
-    assertThat(meters.counter("otp4j.issued", "flow", "registration").count()).isEqualTo(2);
+    assertThat(meters.counter("org4j.otp.issued", "flow", "registration").count()).isEqualTo(2);
   }
 
   @Test
@@ -83,7 +83,7 @@ class OtpServiceTest {
         .isInstanceOfSatisfying(
             GeneralException.class,
             e -> assertThat(e.getStatus()).isEqualTo(OtpExceptionStatus.OTP_EXPIRED));
-    assertThat(meters.counter("otp4j.rejected", "flow", "f", "reason", "OTP_INVALID").count())
+    assertThat(meters.counter("org4j.otp.rejected", "flow", "f", "reason", "OTP_INVALID").count())
         .isEqualTo(1);
   }
 

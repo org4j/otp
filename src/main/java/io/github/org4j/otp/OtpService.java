@@ -1,5 +1,9 @@
-package uz.khakimjanovich.otp4j;
+package io.github.org4j.otp;
 
+import io.github.org4j.error.GeneralException;
+import io.github.org4j.valkey.ValkeyExceptionStatus;
+import io.github.org4j.valkey.ValkeyKeys;
+import io.github.org4j.valkey.ValkeyScript;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -13,10 +17,6 @@ import java.util.function.Supplier;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
-import uz.khakimjanovich.error4j.GeneralException;
-import uz.khakimjanovich.valkey4j.ValkeyExceptionStatus;
-import uz.khakimjanovich.valkey4j.ValkeyKeys;
-import uz.khakimjanovich.valkey4j.ValkeyScript;
 
 @Slf4j
 public class OtpService {

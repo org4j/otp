@@ -1,5 +1,7 @@
-package uz.khakimjanovich.otp4j;
+package io.github.org4j.otp;
 
+import io.github.org4j.valkey.ValkeyAutoConfiguration;
+import io.github.org4j.valkey.ValkeyKeys;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.beans.factory.ObjectProvider;
@@ -8,8 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import uz.khakimjanovich.valkey4j.ValkeyAutoConfiguration;
-import uz.khakimjanovich.valkey4j.ValkeyKeys;
 
 @AutoConfiguration(after = ValkeyAutoConfiguration.class)
 @ConditionalOnBean(ValkeyKeys.class)

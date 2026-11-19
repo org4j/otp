@@ -1,4 +1,4 @@
 @NullMarked
-package uz.khakimjanovich.otp4j;
+package io.github.org4j.otp;
 
 import org.jspecify.annotations.NullMarked;
