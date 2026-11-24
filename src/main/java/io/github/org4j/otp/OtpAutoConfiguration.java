@@ -11,6 +11,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * {@link OtpService} once Valkey is configured, counting in the app's meter registry, or the global
+ * one without it.
+ */
 @AutoConfiguration(after = ValkeyAutoConfiguration.class)
 @ConditionalOnBean(ValkeyKeys.class)
 @EnableConfigurationProperties(OtpProperties.class)

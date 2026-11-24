@@ -1,34 +1,33 @@
 package io.github.org4j.otp;
 
-import lombok.experimental.UtilityClass;
+/** The properties' prefix. */
+public final class OtpConstants {
 
-@UtilityClass
-public class OtpConstants {
-
+  /** Every property of this library starts with it. */
   public static final String PROPERTIES_PREFIX = "org4j.otp";
 
-  public static final String KEY_FORMAT = "%s:%s:{%s}:%s";
+  static final String KEY_FORMAT = "%s:%s:{%s}:%s";
+  static final String KEY_CODE = "code";
+  static final String KEY_ATTEMPTS = "attempts";
+  static final String KEY_SENDS = "sends";
+  static final String KEY_LAST = "last";
 
-  public static final String HASH_CODE = "code:";
+  static final String HASH_ALGORITHM = "HmacSHA256";
+  static final String HASH_CODE = "code:";
+  static final String HASH_SUBJECT = "subject:";
 
-  public static final String HASH_SUBJECT = "subject:";
+  static final String ISSUE_SCRIPT = "otp/issue.lua";
+  static final String VERIFY_SCRIPT = "otp/verify.lua";
 
-  public static final String LOG_UNAVAILABLE = "One-time codes unavailable: {}";
+  static final String METER_ISSUED = "org4j.otp.issued";
+  static final String METER_VERIFIED = "org4j.otp.verified";
+  static final String METER_REJECTED = "org4j.otp.rejected";
+  static final String TAG_FLOW = "flow";
+  static final String TAG_REASON = "reason";
 
-  public static final String KEY_CODE = "code";
-  public static final String KEY_ATTEMPTS = "attempts";
-  public static final String KEY_SENDS = "sends";
-  public static final String KEY_LAST = "last";
-
-  public static final String METER_ISSUED = "org4j.otp.issued";
-  public static final String METER_VERIFIED = "org4j.otp.verified";
-  public static final String METER_REJECTED = "org4j.otp.rejected";
-  public static final String TAG_FLOW = "flow";
-  public static final String TAG_REASON = "reason";
-
-  public static final String HASH_ALGORITHM = "HmacSHA256";
-  public static final String ISSUE_SCRIPT = "otp/issue.lua";
-  public static final String VERIFY_SCRIPT = "otp/verify.lua";
-  public static final String SECRET_MISSING =
+  static final String LOG_UNAVAILABLE = "One-time codes unavailable: {}";
+  static final String SECRET_MISSING =
       "Set org4j.otp.secret: codes are stored as HMACs keyed with it.";
+
+  private OtpConstants() {}
 }
