@@ -6,8 +6,7 @@ import io.github.org4j.valkey.ValkeyKeys;
 import io.github.org4j.valkey.ValkeyScript;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Arrays;
@@ -16,10 +15,21 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
+/**
+ * Issues and checks one-time codes. Each call is one Lua script in Valkey, so the limits hold and a
+ * code works once even under concurrent requests. Valkey keeps only keyed hashes of the code and of
+ * the subject.
+ *
+ * <p>A flow ({@code "registration"}, {@code "password-reset"}) has its own codes and limits, and
+ * names the metrics. The subject is compared exactly: normalize it (lower-case an email, say)
+ * before both calls, or each spelling gets limits of its own.
+ */
 public class OtpService {
+
+  private static final Logger log = LoggerFactory.getLogger(OtpService.class);
 
   private static final SecureRandom RANDOM = new SecureRandom();
 
@@ -31,6 +41,11 @@ public class OtpService {
   private final MeterRegistry meters;
   private final SecretKeySpec key;
 
+  /**
+   * A service with the given limits.
+   *
+   * @throws IllegalStateException if the secret is missing
+   */
   public OtpService(ValkeyKeys valkey, OtpProperties properties, MeterRegistry meters) {
     if (properties.secret() == null || properties.secret().isBlank()) {
       throw new IllegalStateException(OtpConstants.SECRET_MISSING);
@@ -43,6 +58,15 @@ public class OtpService {
             properties.secret().getBytes(StandardCharsets.UTF_8), OtpConstants.HASH_ALGORITHM);
   }
 
+  /**
+   * A new code for the subject, replacing any earlier one. The caller delivers it.
+   *
+   * @return {@code length} digits
+   * @throws GeneralException {@link OtpExceptionStatus#OTP_SEND_LIMIT}, {@link
+   *     OtpExceptionStatus#OTP_RESEND_TOO_EARLY} or {@link
+   *     OtpExceptionStatus#OTP_ATTEMPTS_EXCEEDED}, each with Retry-After; {@link
+   *     OtpExceptionStatus#OTP_UNAVAILABLE} without Valkey
+   */
   public String issue(String flow, String subject) {
     var code = randomDigits(properties.length());
     var result =
@@ -72,6 +96,13 @@ public class OtpService {
     return code;
   }
 
+  /**
+   * Accepts the subject's current code once; returning normally means it was right.
+   *
+   * @throws GeneralException {@link OtpExceptionStatus#OTP_INVALID}, {@link
+   *     OtpExceptionStatus#OTP_EXPIRED}, {@link OtpExceptionStatus#OTP_ATTEMPTS_EXCEEDED} with
+   *     Retry-After, or {@link OtpExceptionStatus#OTP_UNAVAILABLE} without Valkey
+   */
   public void verify(String flow, String subject, String code) {
     var result =
         run(
@@ -104,23 +135,22 @@ public class OtpService {
   }
 
   private static GeneralException refused(OtpExceptionStatus status, List<Long> result) {
-    var wait = Math.max(1, result.get(1));
-    return new GeneralException(status).retryAfter(Duration.ofMillis(wait));
+    return new GeneralException(status).retryAfter(Duration.ofMillis(Math.max(1, result.get(1))));
   }
 
   private static int status(List<Long> result) {
-    return result == null || result.isEmpty() ? 0 : result.getFirst().intValue();
+    return result.getFirst().intValue();
   }
 
   private static List<Long> run(Supplier<List<Long>> script) {
     try {
       return script.get();
     } catch (GeneralException e) {
-      if (e.getStatus() == ValkeyExceptionStatus.VALKEY_UNAVAILABLE) {
-        log.warn(OtpConstants.LOG_UNAVAILABLE, e.getMessage(), e);
-        throw new GeneralException(OtpExceptionStatus.OTP_UNAVAILABLE);
+      if (e.getStatus() != ValkeyExceptionStatus.VALKEY_UNAVAILABLE) {
+        throw e;
       }
-      throw e;
+      // ValkeyKeys has logged why.
+      throw new GeneralException(OtpExceptionStatus.OTP_UNAVAILABLE);
     } catch (RuntimeException e) {
       log.warn(OtpConstants.LOG_UNAVAILABLE, e.getMessage(), e);
       throw new GeneralException(OtpExceptionStatus.OTP_UNAVAILABLE);
@@ -134,13 +164,12 @@ public class OtpService {
   }
 
   private List<String> keys(String flow, String subject, String... parts) {
-    var prefix =
-        (properties.keyPrefix() != null && !properties.keyPrefix().isBlank())
-            ? properties.keyPrefix()
-            : valkey.service();
     var hashedSubject = hash(OtpConstants.HASH_SUBJECT + subject);
     return Arrays.stream(parts)
-        .map(part -> OtpConstants.KEY_FORMAT.formatted(prefix, flow, hashedSubject, part))
+        .map(
+            part ->
+                OtpConstants.KEY_FORMAT.formatted(
+                    properties.keyPrefix(), flow, hashedSubject, part))
         .toList();
   }
 
@@ -157,7 +186,7 @@ public class OtpService {
       var mac = Mac.getInstance(OtpConstants.HASH_ALGORITHM);
       mac.init(key);
       return HexFormat.of().formatHex(mac.doFinal(value.getBytes(StandardCharsets.UTF_8)));
-    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+    } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }
   }
